@@ -17,13 +17,13 @@ else who managed to accomplish this challenge. (*I would have never had
 the patience and motivation to run that much in the city*) I said to
 myself that I am more mathematician than a runner or cyclist. So, I ask
 myself, what is the optimal route? is there any algorithm that can
-generate the route?
+generate a route?
 
 Chinese postman problem
 -----------------------
 
-Finding a route for #everystreetchallenge is basically the well-known
-problem of *chinese postman*, called after Chinese mathematician Kuan
+Finding a route for #everystreetchallenge is basically a well-known
+problem of the *chinese postman*, called after Chinese mathematician Kuan
 Mei-Ko. (Also known as *Postman Tour* or *Route Inspection Problem*) The
 problem is to find the shortest closed path (or circuit) such that
 visits every edge of a (closed and undirected) graph.
@@ -63,12 +63,15 @@ Algorithm
 ~~~~~~~~~
 
 In this work, we used algorithm mentioned by Ruslan Zabrodin [6], which
-states as follow: 1. Get nodes with odd degree 2. Count distance between
-all odd-degree nodes 3. Create a complete weighted graph of all
-odd-degree nodes, as weights we use distance from 2. 4. Count minimal
-matching in the complete weighted graph (or maximal matching with
-inverted weights ``-w``) 5. Add matched pairs into original graph 6.
-Find the Eulerian circuit using Hierholzer [10] algorithm 7. Sanitize
+states as follow:  
+
+1.  Get nodes with odd degree  
+2.  Count distance between all odd-degree nodes  
+3.  Create a complete weighted graph of all odd-degree nodes, as weights we use distance from 2.  
+4.  Count minimal matching in the complete weighted graph (or maximal matching with inverted weights ``-w``)  
+5.  Add matched pairs into original graph   
+6.  Find the Eulerian circuit using Hierholzer [10] algorithm  
+7.  Sanitize 
 *Eulerian circuit* such that if edge of *matched pair* doesn't exists
 find closed path connecting *matched pair*
 
@@ -141,7 +144,7 @@ Addition
 ~~~~~~~~
 
 As an addition to previous work we managed to implement the problem on
-Open Street Map which is a real map represented as directed and weighted
+OpenStreetMap which is a real map, represented as directed and weighted
 multigraph, while previous works [5] could not manage multi-edges.
 
 Limitation
