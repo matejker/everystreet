@@ -1,12 +1,12 @@
 
-#everystreetchallenge algorithm
+#everystreet challenge algorithm
 ===============================
 
 Over the COVID-19 lockdown many runners / cyclist found themselves
 captured within their cities. Some of them ended up running / spinning
 endless hours on virtual races such as Zwift, but some as e.g. `Mark
 Beaumont <https://www.strava.com/athletes/8288853>`__ [1] decided to
-join #everystreetchallenge. Every street is a challenge originated by
+join #everystreet challenge. Every street is a challenge originated by
 `Rickey Gates <https://www.everysinglestreet.com/why>`__ [2, 3] (?) who
 run *every single street* in city of San Francisco in fall 2018 which
 took him 46 days and run 1,303 miles.
@@ -135,7 +135,7 @@ Conclusion
 ----------
 
 In this work, we tried to adapt the *Postman Tour Problem* to the
-#everystreetchallenge. Using ``OSMnx`` package we were able to
+#everystreet challenge. Using ``OSMnx`` package we were able to
 demonstrate on real data.
 
 Addition
