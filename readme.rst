@@ -15,22 +15,22 @@ Inspired by Mark Beaumont who did this challenge over the lockdown in
 Edinburgh, place where I spend the lockdown, and literally everybody
 else who managed to accomplish this challenge. (*I would have never had
 the patience and motivation to run that much in the city*) I said to
-myself that I am more mathematician than a runner or cyclist. So, I ask
+myself that I am more a mathematician than a runner or cyclist. So, I ask
 myself, what is the optimal route? is there any algorithm that can
-generate a route?
+generate such route?
 
 Chinese postman problem
 -----------------------
 
-Finding a route for #everystreetchallenge is basically a well-known
+Finding a route for #everystreet challenge is basically a well-known
 problem of the *chinese postman*, called after Chinese mathematician Kuan
 Mei-Ko. (Also known as *Postman Tour* or *Route Inspection Problem*) The
 problem is to find the shortest closed path (or circuit) such that
 visits every edge of a (closed and undirected) graph.
 
-This solution is strongly inspired algorithm by Ruslan Zabrodin [6] and
+This solution is strongly inspired by Ruslan Zabrodin algorithm [6] and
 Andrew Brooks blog post [5]. For implementing the solution we used
-``Networkx`` [7], ``osmnx`` a python package which uses OpenStreetMap's
+``Networkx`` [7], ``osmnx`` a python package which uses OpenStreetMaps
 API [8] and my tiny network package [9].
 
 .. code:: ipython3
@@ -44,8 +44,8 @@ API [8] and my tiny network package [9].
     from network import Network
     from network.algorithms import hierholzer
 
-We used ``osmnx`` a source to fetch and plot geographical data. As an
-example we choose an Edinburgh neighborhood of the Grange.
+We used ``osmnx`` as a source to fetch and plot geographical data. For
+example, we choose an Edinburgh neighborhood of the Grange.
 
 .. code:: ipython3
 
@@ -65,15 +65,13 @@ Algorithm
 In this work, we used algorithm mentioned by Ruslan Zabrodin [6], which
 states as follow:  
 
-1.  Get nodes with odd degree  
+1.  Select all nodes with odd degree  
 2.  Count distance between all odd-degree nodes  
-3.  Create a complete weighted graph of all odd-degree nodes, as weights we use distance from 2.  
+3.  Create a complete weighted graph of all odd-degree nodes, as weights we use distance from step 2.  
 4.  Count minimal matching in the complete weighted graph (or maximal matching with inverted weights ``-w``)  
 5.  Add matched pairs into original graph   
 6.  Find the Eulerian circuit using Hierholzer [10] algorithm  
-7.  Sanitize 
-*Eulerian circuit* such that if edge of *matched pair* doesn't exists
-find closed path connecting *matched pair*
+7.  Sanitize *Eulerian circuit* such that if edge of *matched pair* doesn't exists find closed path connecting *matched pair*
 
 .. code:: ipython3
 
