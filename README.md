@@ -142,9 +142,9 @@ multigraph, while previous works [5] could not manage multi-edges.
 
 The biggest limitation of this work is the speed and performance of the
 algorithm. However *Postman Tour Problem* is not NP hard problem we are
-dealing algorithms such as Hierholzer's algorithm :math:`O(|E|)`,
-Dijkstra's algorithm :math:`Θ(|E| + |V|log(|V|))` and Weighted
-maximum matching having :math:`O(|V|^3) [11, 12]`. In addition Python
+dealing algorithms such as Hierholzer's algorithm `O(|E|)`,
+Dijkstra's algorithm `Θ(|E| + |V|log(|V|))` and Weighted
+maximum matching having `O(|V|^3) [11, 12]`. In addition Python
 packages `NetworkX` and `OSMnx` are simply not the fastest :)
 
 Related readings
