@@ -161,7 +161,7 @@ References
 
  [1] Mark Beaumont Strava Profile,
    https://www.strava.com/athletes/8288853  
- [2] Rickey Hates (2019), Every Single Street with Rickey Hates,
+ [2] Rickey Gates (2019), Every Single Street with Rickey Gates,
    https://www.everysinglestreet.com/why  
 [3] Katherine Turner (2019), Every Single Street, Strava stories,
    https://blog.strava.com/every-single-street-17484/  
