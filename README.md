@@ -9,22 +9,23 @@ which took him 46 days and run 1,303 miles.
 
 Inspired by Mark Beaumont who did this challenge over the lockdown in Edinburgh, 
 place where I spend the lockdown, and literally everyone else who managed to 
-accomplish this challenge(_I would have never had the patience and motivation to 
+accomplish this challenge (_I would have never had the patience and motivation to 
 run that much in the city_) 
-I said to myself that I am more a mathematician than a runner or cyclist. So, I ask
-myself, what is the optimal route? is there any algorithm that can generate such route?
+I said to myself that I am a mathematician and software engineer more then a runner 
+or cyclist. So, I ask myself, what is the optimal route? Is there any algorithm 
+which can generate such route?
 
  - For more details see [the theoretical summary](./everystreet_algorithm.pdf)
  - The _app_ itself can be find: [www.everystreetchallenge.com](http://www.everystreetchallenge.com)
  - Jupyter notebook with [The Grange example](./everystreet.ipynb)
 
 ## Every street challenge
-Rules of every street challenge are run or cycle2 every single street of given 
+Rules of every street challenge are run or cycle every single street of given 
 (metropolitan) area which is usually a city or a neighborhood. Till this point
 the rules are simple and clear, but the problem is the street definition. How 
-do we define a street? Do we include pedestrian paths, parks or highways? For 
+do we define a street? Do we include pedestrian paths, parks or motorways? For 
 simplicity, we consider a street network of edges and nodes (interception of 
-two or more edges and dead-end roads) accessible by car. Assuming that runner 
+two or more edges and dead-end roads) accessible by car*. Assuming that runner 
 can run oneway roads in both direction, we do not consider road direction. 
 In order to find such network we used Open Street Map API [4].
 
@@ -48,22 +49,24 @@ from network import Network
 from network.algorithms import hierholzer
 ```
 
-We used `osmnx` as a source to fetch and plot geographical data. As an example, 
+We used `OSMnx` as a source for geographical data. As an example, 
 we chose an Edinburgh neighborhood of the Grange. In order to avoid heavy traffic
-we specify `osmnx` query and limit the `highway` selection.
+we specify `OSMnx` query and limit the `highway` selection.
 
 ```python
 CUSTOM_FILTER = (
-    '["highway"]["area"!~"yes"]["highway"!~"bridleway|bus_guideway|bus_stop|construction|cycleway|elevator|footway|'
-    'motorway|motorway_junction|motorway_link|escalator|proposed|construction|platform|raceway|rest_area|'
-    'path|service"]["access"!~"customers|no|private"]["public_transport"!~"platform"]'
-    '["fee"!~"yes"]["foot"!~"no"]["service"!~"drive-through|driveway|parking_aisle"]["toll"!~"yes"]'
+    '["highway"]["area"!~"yes"]["highway"!~"bridleway|bus_guideway|bus_stop|construction|'
+    'cycleway|elevator|footway|motorway|motorway_junction|motorway_link|escalator|proposed|'
+    'construction|platform|raceway|rest_area|path|service"]["access"!~"customers|no|private"]'
+    '["public_transport"!~"platform"]["fee"!~"yes"]["foot"!~"no"]["service"!~"drive-through|'
+    'driveway|parking_aisle"]["toll"!~"yes"]'
 )
 
 location = "The Grange, Edinburgh, Scotland"
 org_graph = ox.graph_from_place(location, custom_filter=CUSTOM_FILTER)
 
-# Simplifying the original directed multi-graph to undirected, so we can go both ways in one way streets
+""" Simplifying the original directed multi-graph to undirected, so we can go both 
+    ways in one way streets """
 graph = ox.utils_graph.get_undirected(org_graph)
 fig, ax = ox.plot_graph(graph, node_zorder=2, node_color="k", bgcolor="w")
 ```
@@ -73,7 +76,7 @@ fig, ax = ox.plot_graph(graph, node_zorder=2, node_color="k", bgcolor="w")
 
 ## Algorithm
 
-In this work, we used algorithm mentioned by Ruslan Zabrodin [6], which
+In this work, we used algorithm proposed by Edmonds, J. and Johnson [5], which
 states as follow:  
 
 1.  Find all nodes with odd degree  
