@@ -142,12 +142,6 @@ for i, e in enumerate(final_path, start=1):
 ![](docs/everystreet_grange.gif)
 
 
-## Conclusion
-
-In this work, we tried to adapt the *Postman Tour Problem* to the
-\#everystreet challenge. Using `OSMnx` package we were able to
-demonstrate on real data.
-
 ## Usage
 Feel more that free to use, modify and copy the code, just follow the [licence](./LICENSE.txt) and cite it:
 
@@ -184,7 +178,7 @@ https://doi.org/10.1007/BF01580113
 Map by Merian-Erben 1652.jpg  
 [9] Euler L. (1741), _Commentarii academiae scientiarum Petropolitanae_, Vol- ume 8, pp. 128-140. 
 https://scholarlycommons.pacific.edu/euler-works/53/  
-[10] Fleischner H. (2016), _Algorithms in Graph Theory_, [dbai.tuwien.ac.at/staff/kronegger/misc/ AlgorithmsInGraphTheory Script.pdf](https://www.dbai.tuwien.ac.at/staff/kronegger/misc/ AlgorithmsInGraphTheory Script.pdf)   
+[10] Fleischner H. (2016), _Algorithms in Graph Theory_, https://www.dbai.tuwien.ac.at/staff/kronegger/misc/ AlgorithmsInGraphTheory Script.pdf   
 [11] Cormen, T. H. (2001), _Introduction to algorithms_, Cambridge, Mass: MIT Press.  
 [12] Galil Z. (1986), _Efficient algorithms for finding maximum matching in graphs_, 
 https://www.semanticscholar.org/paper/Efficient-algorithms-for- finding-maximum-matching-Galil/ef1b31b4728615a52e3b8084379a4897 b8e526ea   
