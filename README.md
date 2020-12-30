@@ -1,23 +1,32 @@
 # \#everystreet algorithm
 
-Over the COVID-19 lockdown many runners / cyclist found themselves
-captured within their cities. Some of them ended up running / spinning
-endless hours on virtual races such as Zwift, but some as e.g. [Mark
-Beaumont](https://www.strava.com/athletes/8288853) [1] decided to
-join #everystreet challenge. Every street is a challenge originated by
-[Rickey Gates](https://www.everysinglestreet.com/why>) [2, 3] (?) who
-run _every single street_ in city of San Francisco in fall 2018 which
-took him 46 days and run 1,303 miles.
+Over the COVID-19 lockdown many runners and cyclist found themselves captured 
+within their cities. Some of them ended up running or spinning endless hours 
+on virtual races such as Zwift, but some as e.g. Mark Beaumont [1] decided to 
+join #everystreet challenge. Every street is a challenge originated by Rickey 
+Gates [2, 3] who run _every single street_ in city of San Francisco in fall 2018 
+which took him 46 days and run 1,303 miles.
 
-Inspired by Mark Beaumont who did this challenge over the lockdown in
-Edinburgh, place where I spend the lockdown, and literally everybody
-else who managed to accomplish this challenge. (_I would have never had
-the patience and motivation to run that much in the city_) I said to
-myself that I am more a mathematician than a runner or cyclist. So, I ask
-myself, what is the optimal route? is there any algorithm that can
-generate such route?
+Inspired by Mark Beaumont who did this challenge over the lockdown in Edinburgh, 
+place where I spend the lockdown, and literally everyone else who managed to 
+accomplish this challenge(_I would have never had the patience and motivation to 
+run that much in the city_) 
+I said to myself that I am more a mathematician than a runner or cyclist. So, I ask
+myself, what is the optimal route? is there any algorithm that can generate such route?
 
-👉 [See the whole theoritical part](./everystreet_algorithm.pdf)
+ - For more details see [the theoretical summary](./everystreet_algorithm.pdf)
+ - The _app_ itself can be find: [www.everystreetchallenge.com](http://www.everystreetchallenge.com)
+ - Jupyter notebook with [The Grange example](./everystreet.ipynb)
+
+## Every street challenge
+Rules of every street challenge are run or cycle2 every single street of given 
+(metropolitan) area which is usually a city or a neighborhood. Till this point
+the rules are simple and clear, but the problem is the street definition. How 
+do we define a street? Do we include pedestrian paths, parks or highways? For 
+simplicity, we consider a street network of edges and nodes (interception of 
+two or more edges and dead-end roads) accessible by car. Assuming that runner 
+can run oneway roads in both direction, we do not consider road direction. 
+In order to find such network we used Open Street Map API [4].
 
 ## Chinese postman problem
 
@@ -27,56 +36,60 @@ Mei-Ko. (Also known as *Postman Tour* or *Route Inspection Problem*) The
 problem is to find the shortest closed path (or circuit) such that
 visits every edge of a (closed and undirected) graph.
 
-This solution is strongly inspired by Ruslan Zabrodin algorithm [6] and
-Andrew Brooks blog post [5]. For implementing the solution we used
-`Networkx` [7], `osmnx` a python package which uses OpenStreetMaps
-API [8] and my tiny network package [9].
-
 ```python
+from libs.tools import *
+from libs.graph_route import plot_graph_route
+
 import networkx as nx
 import osmnx as ox
-ox.config(use_cache=True, log_console=True)
-from tools import *
-from graph_route import plot_graph_route
 import matplotlib.pyplot as plt
+
 from network import Network
 from network.algorithms import hierholzer
 ```
 
-We used `osmnx` as a source to fetch and plot geographical data. For
-example, we choose an Edinburgh neighborhood of the Grange.
+We used `osmnx` as a source to fetch and plot geographical data. As an example, 
+we chose an Edinburgh neighborhood of the Grange. In order to avoid heavy traffic
+we specify `osmnx` query and limit the `highway` selection.
 
 ```python
+CUSTOM_FILTER = (
+    '["highway"]["area"!~"yes"]["highway"!~"bridleway|bus_guideway|bus_stop|construction|cycleway|elevator|footway|'
+    'motorway|motorway_junction|motorway_link|escalator|proposed|construction|platform|raceway|rest_area|'
+    'path|service"]["access"!~"customers|no|private"]["public_transport"!~"platform"]'
+    '["fee"!~"yes"]["foot"!~"no"]["service"!~"drive-through|driveway|parking_aisle"]["toll"!~"yes"]'
+)
 
-location = 'The Grange, Edinburgh, Scotland'
-org_graph = ox.graph_from_place(location, network_type='drive')
-graph = ox.utils_graph.get_undirected(org_graph)  # for simplification we can use undirected graph
-fig, ax = ox.plot_graph(graph, node_zorder=2, node_color='k', bgcolor='w')
+location = "The Grange, Edinburgh, Scotland"
+org_graph = ox.graph_from_place(location, custom_filter=CUSTOM_FILTER)
+
+# Simplifying the original directed multi-graph to undirected, so we can go both ways in one way streets
+graph = ox.utils_graph.get_undirected(org_graph)
+fig, ax = ox.plot_graph(graph, node_zorder=2, node_color="k", bgcolor="w")
 ```
 
-![](output_3_0.png)
+![](docs/output_3_0.png)
 
 
-##Algorithm
+## Algorithm
 
 In this work, we used algorithm mentioned by Ruslan Zabrodin [6], which
 states as follow:  
 
-1.  Select all nodes with odd degree  
-2.  Count distance between all odd-degree nodes  
+1.  Find all nodes with odd degree  
+2.  Count the sortest distance between all odd-degree nodes  
 3.  Create a complete weighted graph of all odd-degree nodes, as weights we use distance from step 2.  
-4.  Count minimal matching in the complete weighted graph (or maximal matching with inverted weights ``-w``)  
+4.  Count minimal matching in the complete weighted graph
 5.  Add matched pairs into original graph   
 6.  Find the Eulerian circuit using Hierholzer [10] algorithm  
-7.  Sanitize *Eulerian circuit* such that if edge of *matched pair* doesn't exists find closed path connecting *matched pair*
 
-👉 [See the whole theoritical part](./everystreet_algorithm.pdf)
+👉 For more details see [the theoretical summary](./everystreet_algorithm.pdf).
 
 ```python
+# Finds the odd degree nodes and minimal matching
 odd_degree_nodes = get_odd_degree_nodes(graph)
 pair_weights = get_shortest_distance_for_odd_degrees(graph, odd_degree_nodes)
-matched_edges_with_weights = max_matching(pair_weights)
-single_edges = get_single_edges(graph)
+matched_edges_with_weights = min_matching(pair_weights)
 ```
 Result of *minimal matching* plotted into original graph (red edges).
 
@@ -91,39 +104,42 @@ for v, u, w in matched_edges_with_weights:
 fig, ax = ox.plot_graph(graph, node_zorder=2, node_color='g', bgcolor='k', ax=ax)
 ```
 
-
-![](output_7_0.png)
-
+![](docs/output_7_0.png)
 
 Counting the `final_path` with Hierholzer algorithm and plotting on
 map. As we can see all edges were visited.
 
 ```python
-edges = map_osmnx_edges2integers(graph, single_edges + matched_edges_with_weights)
+# List all edges of the extended graph including original edges and edges from minimal matching
+single_edges = [(u, v) for u, v, k in graph.edges]
+added_edges = get_shortest_paths(graph, matched_edges_with_weights)
+edges = map_osmnx_edges2integers(graph, single_edges + added_edges)
 
+# Finds the Eulerian path
 network = Network(len(graph.nodes), edges, weighted=True)
 eulerian_path = hierholzer(network)
 converted_eulerian_path = convert_integer_path2osmnx_nodes(eulerian_path, graph.nodes())
-double_edge_heap = get_double_edge_heap(graph)
+double_edge_heap = get_double_edge_heap(org_graph)
 
+# Finds the final path with edge IDs
 final_path = convert_path(graph, converted_eulerian_path, double_edge_heap)
-fig, ax = plot_graph_route(org_graph, final_path, route_linewidth=6, node_size=0, bgcolor='w', route_alpha=0.2, route_color='b')
+
+fig, ax = plot_graph_route(org_graph, final_path, route_linewidth=6, node_size=0, bgcolor="w", route_alpha=0.2, route_color="w")```
 ```
 
-![](output_9_0.png)
-
+![](docs/output_9_0.png)
 
 In order to see how the *runner* should accomplish the route on the map,
 we created a simple GIF.
 
 ```python
 for i, e in enumerate(final_path, start=1):
-    fig, ax = plot_graph_route(org_graph, final_path[:i], route_linewidth=6, node_size=0, bgcolor='w', route_alpha=0.2)
+    fig, ax = plot_graph_route(org_graph, final_path[:i], route_linewidth=6, node_size=0, bgcolor="w", route_alpha=0.2)
     ax.set_title(location)
-    fig.savefig(f'img_{i}.png', dpi=120, bbox_inches='tight')
+    fig.savefig(f"/img_{i}.png", dpi=120, bbox_inches="tight")
 ```
 
-![](everystree_grange.gif)
+![](docs/everystreet_grange.gif)
 
 
 ## Conclusion
@@ -132,61 +148,45 @@ In this work, we tried to adapt the *Postman Tour Problem* to the
 \#everystreet challenge. Using `OSMnx` package we were able to
 demonstrate on real data.
 
-## Addition
+## Usage
+Feel more that free to use, modify and copy the code, just follow the [licence](./LICENSE.txt) and cite it:
 
-As an addition to previous work we managed to implement the problem on
-OpenStreetMap which is a real map, represented as directed and weighted
-multigraph, while previous works [5] could not manage multi-edges.
+```tex
+@misc{Kerekrety2020,
+  author = {Kerekrety, M},
+  title = {#everystreet algorithm},
+  year = {2020},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/matejker/everystreet}}
+}
+```
 
-## Limitation
+## Related readings
 
-The biggest limitation of this work is the speed and performance of the
-algorithm. However *Postman Tour Problem* is not NP hard problem we are
-dealing algorithms such as Hierholzer's algorithm `O(|E|)`,
-Dijkstra's algorithm `Θ(|E| + |V|log(|V|))` and Weighted
-maximum matching having `O(|V|^3) [11, 12]`. In addition Python
-packages `NetworkX` and `OSMnx` are simply not the fastest :)
-
-Related readings
-----------------
-
--  Brooks Andrew, 2018, "Graph optimization solvers for the Postman
-   Problems", https://github.com/brooksandrew/postman\_problems
--  Wen LeaPearn1, C.M.Liu2, 1994, "Algorithms for the Chinese postman
-   problem on mixed networks",
+-  Brooks Andrew, (2018), _Graph optimization solvers for the Postman Problems_, 
+   [https://github.com/brooksandrew/postman_problems](https://github.com/brooksandrew/postman_problems)
+-  Wen LeaPearn1, C.M.Liu2, (1994), _Algorithms for the Chinese postman problem on mixed networks_,
    https://kundoc.com/pdf-algorithms-for-the-chinese-postman-problem-on-mixed-networks-.html
+-  Andrew Brooks (2017), _Intro to graph optimization: solving the Chinese Postman Problem_
+   http://brooksandrew.github.io/simpleblog/articles/intro-to-graph-optimization-solving-cpp/
 
-References
-----------
-
- [1] Mark Beaumont Strava Profile,
-   https://www.strava.com/athletes/8288853  
- [2] Rickey Hates (2019), Every Single Street with Rickey Hates,
-   https://www.everysinglestreet.com/why  
-[3] Katherine Turner (2019), Every Single Street, Strava stories,
-   https://blog.strava.com/every-single-street-17484/  
-[4] Reinhard Diestel (2000), Graph Theory, Springer, Volume 173 of
-   Graduate texts in mathematics, ISSN 0072-5285  
- [5] Andrew Brooks (2017), Intro to graph optimization: solving the
-   Chinese Postman Problem,
-   http://brooksandrew.github.io/simpleblog/articles/intro-to-graph-optimization-solving-cpp/  
- [6] Ruslan Zabrodin (2015), Postman Problem,
-   https://www-m9.ma.tum.de/graph-algorithms/directed-chinese-postman/index\_en.html  
- [7] NetworkX Developers (2020), "NetworkX is a Python package for the
-   creation, manipulation, and study of the structure, dynamics, and
-   functions of complex networks.", https://github.com/networkx/networkx  
- [8] Boeing, G. (2017). "OSMnx: New Methods for Acquiring,
-   Constructing, Analyzing, and Visualizing Complex Street Networks."
-   Computers, Environment and Urban Systems 65, 126-139.
-   doi:10.1016/j.compenvurbsys.2017.05.004  
- [9] Matej Kerekrety (2020), "Simple pure Python package for
-   generating, modifying and playing with (even complex) networks.",
-   https://github.com/matejker/network  
- [10] Ruslan Zabrodin (2015), Algorithmus von Hierholzer,
-   https://www-m9.ma.tum.de/graph-algorithms/hierholzer/index\_en.html  
- [11] Galil, Z. (1986). Efficient algorithms for finding maximum
-   matching in graphs. ACM Comput. Surv., 18,  
-   23-38.https://www.semanticscholar.org/paper/Efficient-algorithms-for-finding-maximum-matching-Galil/ef1b31b4728615a52e3b8084379a4897b8e526ea?p2df  
- [12] Jack Edmonds (2008), "Weighted maximum matching in general
-   graphs.",
-   http://jorisvr.nl/files/graphmatching/20130407/mwmatching.py
+## References
+[1] Beaumont M. (2020), _Strava Profile_, https://www.strava.com/athletes/8288853  
+[2] Gates R. (2019), _Every Single Street with Rickey Gates_, https://www.everysinglestreet.com/why  
+[3] Turner K. (2019), _Every Single Street, Strava stories_, https://blog.strava.com/every-single-street-17484/  
+[4] Open Street Map (2020), http://openstreetmap.org  
+[5] Edmonds, J. and Johnson, E.L (1973), _Matching, Euler tours and the Chinese postman. Mathematical Programming 5, 88124_ 
+https://doi.org/10.1007/BF01580113  
+[6] Bondy J. A. and Murty U. S. R. (1976), _Graph theory with applications_, ISBN 0333177916  
+[7] Diestel. R, (2005), _Graph Theory Graduate Texts in Mathematics_, Springer  
+[8] Erben, M., (1652), _Knigsberg 1651_, https://en.wikipedia.org/wiki/Knigsberg#/media/File:Image- Koenigsberg, 
+Map by Merian-Erben 1652.jpg  
+[9] Euler L. (1741), _Commentarii academiae scientiarum Petropolitanae_, Vol- ume 8, pp. 128-140. 
+https://scholarlycommons.pacific.edu/euler-works/53/  
+[10] Fleischner H. (2016), _Algorithms in Graph Theory_, [dbai.tuwien.ac.at/staff/kronegger/misc/ AlgorithmsInGraphTheory Script.pdf](https://www.dbai.tuwien.ac.at/staff/kronegger/misc/ AlgorithmsInGraphTheory Script.pdf)   
+[11] Cormen, T. H. (2001), _Introduction to algorithms_, Cambridge, Mass: MIT Press.  
+[12] Galil Z. (1986), _Efficient algorithms for finding maximum matching in graphs_, 
+https://www.semanticscholar.org/paper/Efficient-algorithms-for- finding-maximum-matching-Galil/ef1b31b4728615a52e3b8084379a4897 b8e526ea   
+[13] Edmonds J. (2008), _Weighted maximum matching in general graphs_, 
+http://jorisvr.nl/files/graphmatching/20130407/mwmatching.py  
