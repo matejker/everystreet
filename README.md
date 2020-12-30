@@ -142,7 +142,7 @@ for i, e in enumerate(final_path, start=1):
     fig.savefig(f"/img_{i}.png", dpi=120, bbox_inches="tight")
 ```
 
-![](docs/everystreet_grange.gif)
+<img src="docs/everystreet_grange.gif" alt="The Grange route" width="460">
 
 
 ## Usage
