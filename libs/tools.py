@@ -112,7 +112,7 @@ def get_shortest_distance_for_odd_degrees(graph, odd_degree_nodes):
 
     pairs = combinations(odd_degree_nodes, 2)
 
-    return {(v, u): nx.dijkstra_path_length(graph, v, u, weight='length') for v, u in pairs}
+    return {(v, u): nx.dijkstra_path_length(graph, v, u, weight="length") for v, u in pairs}
 
 
 def get_shortest_paths(graph, nodes):
@@ -148,7 +148,7 @@ def networkx2network(graph):
     new_graph = nx.Graph()
     nodes = list(graph.nodes())
     nodes.sort()
-    edges = [(nodes.index(v), nodes.index(u), np.round(d['length'], 2)) for (v, u, d) in graph.edges(data=True) if 'length' in d]  # noqa
+    edges = [(nodes.index(v), nodes.index(u), np.round(d["length"], 2)) for (v, u, d) in graph.edges(data=True) if "length" in d]  # noqa
     new_graph.add_weighted_edges_from(edges)
 
     n = len(nodes)
@@ -174,7 +174,7 @@ def get_double_edge_heap(graph):
             data = graph.get_edge_data(v, u)
             double_edge_heap[v, u] = []
             for k, d in data.items():
-                double_edge_heap[v, u].append((np.round(d['length'], 2), k))
+                double_edge_heap[v, u].append((np.round(d["length"], 2), k))
 
             heapify(double_edge_heap[v, u])
 
@@ -261,8 +261,8 @@ def convert_final_path_to_coordinates(org_graph, final_path):
         # ~5% of one way streets have incorrect coords)
         if not org_graph.get_edge_data(u, v) or i not in org_graph.get_edge_data(u, v):
             inverse_edge = org_graph.get_edge_data(v, u)
-            if inverse_edge and i in inverse_edge and 'geometry' in inverse_edge[i]:
-                coords = list(inverse_edge[i]['geometry'].coords)[::-1]
+            if inverse_edge and i in inverse_edge and "geometry" in inverse_edge[i]:
+                coords = list(inverse_edge[i]["geometry"].coords)[::-1]
 
                 for (x, y) in coords:
                     path.append([y, x])
@@ -270,7 +270,7 @@ def convert_final_path_to_coordinates(org_graph, final_path):
             continue
 
         # Edge does not have `geometry` field, return origin and end coordinates
-        if 'geometry' not in org_graph.get_edge_data(u, v)[i]:
+        if "geometry" not in org_graph.get_edge_data(u, v)[i]:
             x1 = org_graph.nodes[u]["x"]
             x2 = org_graph.nodes[v]["x"]
 
@@ -281,7 +281,7 @@ def convert_final_path_to_coordinates(org_graph, final_path):
             continue
 
         # Edge does exists and has geometry and was hit in the right direction
-        coords = list(org_graph.get_edge_data(u, v)[i]['geometry'].coords)
+        coords = list(org_graph.get_edge_data(u, v)[i]["geometry"].coords)
 
         for (x, y) in coords:
             path.append([y, x])
