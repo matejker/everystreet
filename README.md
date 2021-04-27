@@ -146,6 +146,12 @@ for i, e in enumerate(final_path, start=1):
 
 
 ## Usage
+In order to run it locally you need to install it on Python +3.8:
+```bash
+pip install -r requirements.txt  # Using pip
+poetry install  # or by using Poetry
+```
+
 Feel more that free to use, modify and copy the code, just follow the [licence](./LICENSE.txt) and cite it:
 
 ```tex
