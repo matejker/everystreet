@@ -144,6 +144,7 @@ for i, e in enumerate(final_path, start=1):
 
 <img src="docs/everystreet_grange.gif" alt="The Grange route" width="460">
 
+If you would like to generate GPX file with the route, follow [Issue #6 (comment)](https://github.com/matejker/everystreet/issues/6#issuecomment-774651380)
 
 ## Usage
 In order to run it locally you need to install it on Python +3.8:
