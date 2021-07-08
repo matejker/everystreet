@@ -80,9 +80,9 @@ In this work, we used algorithm proposed by Edmonds, J. and Johnson [5], which
 states as follow:  
 
 1.  Find all nodes with odd degree  
-2.  Count the sortest distance between all odd-degree nodes  
-3.  Create a complete weighted graph of all odd-degree nodes, as weights we use distance from step 2.  
-4.  Count minimal matching in the complete weighted graph
+2.  Calculate the sortest distance between all odd-degree nodes  
+3.  Create a complete weighted graph of all odd-degree nodes, as weights we use distances from step 2.  
+4.  Find minimal matching in the complete weighted graph
 5.  Add matched pairs into original graph   
 6.  Find the Eulerian circuit using Hierholzer [10] algorithm  
 
