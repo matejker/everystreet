@@ -8,7 +8,7 @@ license = "MIT License"
 [tool.poetry.dependencies]
 python = "^3.8"
 mk-network = {git = "https://github.com/matejker/network", rev = "master"}
-notebook = "^6.1.5"
+notebook = "^6.4.12"
 networkx = "2.4"
 osmnx = "0.15.1"
 matplotlib = "^3.2.1"
