@@ -6,11 +6,11 @@ authors = ["Matej Kerekrety <matej.kerekrety@gmail.com>"]
 license = "MIT License"
 
 [tool.poetry.dependencies]
-python = "^3.8"
-mk-network = {git = "https://github.com/matejker/network", rev = "master"}
+python = ">=3.8.1,<4.0"
+mk-network = {git = "https://github.com/matejker/network", branch = "master"}
 notebook = "^6.1.5"
-networkx = "2.4"
-osmnx = "0.15.1"
+networkx = "^2.4"
+osmnx = "^0.15.1"
 matplotlib = "^3.2.1"
 numpy = "^1.22.0"
 

@@ -1,6 +1,6 @@
 -e git://github.com/gboeing/osmnx@main#egg=osmnx
 -e git://github.com/matejker/network@master#egg=network
-networkx==2.4
-matplotlib==3.2.1
-numpy==1.18.5
+networkx>=2.4
+matplotlib>=3.2.1
+numpy>=1.18.5
 notebook
