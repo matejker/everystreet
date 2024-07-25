@@ -1,5 +1,5 @@
--e git://github.com/gboeing/osmnx@main#egg=osmnx
--e git://github.com/matejker/network@master#egg=network
+-e git+https://github.com/gboeing/osmnx@main#egg=osmnx
+-e git+https://github.com/matejker/network@master#egg=mk-network
 networkx>=2.4
 matplotlib>=3.2.1
 numpy>=1.18.5
