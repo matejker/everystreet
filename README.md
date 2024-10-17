@@ -67,7 +67,7 @@ org_graph = ox.graph_from_place(location, custom_filter=CUSTOM_FILTER)
 
 """ Simplifying the original directed multi-graph to undirected, so we can go both 
     ways in one way streets """
-graph = ox.utils_graph.get_undirected(org_graph)
+graph = ox.convert.to_undirected(org_graph)
 fig, ax = ox.plot_graph(graph, node_zorder=2, node_color="k", bgcolor="w")
 ```
 
