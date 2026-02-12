@@ -13,6 +13,7 @@ networkx = "^2.4"
 osmnx = "^0.15.1"
 matplotlib = "^3.2.1"
 numpy = "^1.22.0"
+flask = "^2.0"
 
 [tool.poetry.dev-dependencies]
 

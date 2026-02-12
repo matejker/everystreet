@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>#everystreet challenge</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+    <div id="sidebar">
+        <div class="sidebar-header">
+            <h1>#everystreet</h1>
+            <p class="subtitle">Find the optimal route to run every street</p>
+        </div>
+
+        <div class="sidebar-content">
+            <div class="form-group">
+                <label for="location">Location</label>
+                <input type="text" id="location" placeholder="e.g. The Grange, Edinburgh, Scotland" />
+            </div>
+
+            <div class="form-group">
+                <label>Starting point <span class="hint">(optional — click the map or enter coordinates)</span></label>
+                <div class="coord-inputs">
+                    <input type="text" id="start-lat" placeholder="Latitude" />
+                    <input type="text" id="start-lon" placeholder="Longitude" />
+                </div>
+                <button id="clear-start" class="btn-link" style="display:none;">Clear starting point</button>
+            </div>
+
+            <button id="generate-btn" class="btn-primary">Generate Route</button>
+
+            <div id="status" class="status" style="display:none;"></div>
+
+            <div id="stats" class="stats" style="display:none;">
+                <h3>Route Statistics</h3>
+                <div class="stat-row">
+                    <span class="stat-label">Total distance</span>
+                    <span id="stat-distance" class="stat-value"></span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Street segments</span>
+                    <span id="stat-edges" class="stat-value"></span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Intersections</span>
+                    <span id="stat-nodes" class="stat-value"></span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Route segments</span>
+                    <span id="stat-route-edges" class="stat-value"></span>
+                </div>
+                <button id="download-gpx" class="btn-secondary">Download GPX</button>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <p>Based on the <a href="https://github.com/matejker/everystreet" target="_blank">everystreet algorithm</a> by Matej Kerekrety</p>
+        </div>
+    </div>
+
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="/static/app.js"></script>
+</body>
+</html>
