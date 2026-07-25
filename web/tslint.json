@@ -1,0 +1,54 @@
+{
+	"extends": [
+		"tslint:recommended"
+	],
+	"defaultSeverity": "error",
+	"rules": {
+		"no-console": false,
+		"whitespace": [
+			true,
+			"check-branch",
+			"check-decl",
+			"check-operator",
+			"check-module",
+			"check-separator",
+			"check-rest-spread",
+			"check-type-operator",
+			"check-preblock"
+		],
+		"curly": false,
+		"indent": [
+			true,
+			"tabs"
+		],
+		"linebreak-style": [
+			true,
+			"LF"
+		],
+		"max-line-length": [
+			true,
+			150
+		],
+		"max-file-line-count": [
+			true,
+			350
+		],
+		"no-duplicate-variable": true,
+		"no-angle-bracket-type-assertion": false,
+		"object-literal-sort-keys": false,
+		"object-literal-key-quotes": false,
+		"quotemark": [
+			true,
+			"single",
+			"jsx-double",
+			"avoid-escape"
+		],
+		"switch-default": true,
+		"trailing-comma": [
+			false
+		],
+		"triple-equals": [
+			true
+		]
+	}
+}

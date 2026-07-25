@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y07PVXGMV9"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-Y07PVXGMV9', { client_storage: 'none' });
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:image" content="%PUBLIC_URL%/preview.png">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Simple algorithm for Every Street Challenge">
+    <meta property="og:site_name" content="Every Street Challenge">
+    <meta name="og:image:width" content="1200">
+    <meta name="og:image:height" content="630">
+    <title>Every Street Challenge</title>
+    <link rel="stylesheet" href="%PUBLIC_URL%/main.css"/>
+</head>
+<body>
+    <header>
+        <h1><a href="#/">#everystreet challenge</a></h1>
+        <em class="description">Run every street in your neighbourhood &mdash; the optimal way.</em>
+    </header>
+    <menu>
+        <li><a href="#/">Generate route</a></li>
+        <li><a href="#/about">About</a></li>
+        <li><a href="https://matejker.github.io/run-hilbert-run/#app">Space Filling curve</a><sup>NEW!</sup></li>
+    </menu>
+    <div id="container">
+		<noscript>
+			You need to enable JavaScript to run this app.
+		</noscript>
+		<div id="root"></div>
+		</div>
+    <footer>
+        <p>&copy; <a href="https://matejker.github.io/" target="_blank" rel="noopener">Matej Kerekrety</a> 2020 &ndash; 2026, <a href="#/changelog">Changelog</a> <a href="https://github.com/matejker/everystreet" target="_blank" rel="noopener"><img src="%PUBLIC_URL%/github-2.png" alt="GitHub"></a></p>
+        <!-- <p>We are using 🍪 cookies for monitoring purposes, manage your <a href="/privacy-policy">cookies preferences</a>.</p> -->
+    </footer>
+</body>
+</html>
