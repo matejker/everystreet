@@ -6,13 +6,15 @@ authors = ["Matej Kerekrety <matej.kerekrety@gmail.com>"]
 license = "MIT License"
 
 [tool.poetry.dependencies]
-python = ">=3.8.1,<4.0"
+python = ">=3.10,<4.0"
 mk-network = {git = "https://github.com/matejker/network", branch = "master"}
-notebook = "^6.1.5"
-networkx = "^2.4"
-osmnx = "^0.15.1"
-matplotlib = "^3.2.1"
-numpy = "^1.22.0"
+notebook = "^7.0"
+# mk-network caps networkx <3 and numpy <2, so these floors are the highest patched
+# versions still compatible with the whole dependency graph.
+networkx = ">=2.8.8,<3.0"
+osmnx = "^2.0"
+matplotlib = "^3.9"
+numpy = ">=1.26,<2.0"
 
 [tool.poetry.dev-dependencies]
 
