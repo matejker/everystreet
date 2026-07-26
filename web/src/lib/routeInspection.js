@@ -6,9 +6,9 @@ import { buildGraph } from "./graph";
 import { dijkstra, reconstructPath } from "./dijkstra";
 import { minWeightMatching } from "./matching";
 import { hierholzer } from "./hierholzer";
-import { lineLength, centroid, polygonAreaKm2 } from "./geo";
+import { lineLength, centroid, polygonAreaKm2, haversine } from "./geo";
 
-export const MAX_POLYGON_AREA = 3; // km^2, same guard as the old backend
+export const MAX_POLYGON_AREA = 20; // km^2
 
 const noop = () => {};
 
@@ -68,8 +68,26 @@ function walkToCoordinates(circuit, allEdges) {
   return path;
 }
 
+// Finds the graph node closest to a [lat, lon] point. Used to snap a
+// user-picked start location onto the actual street network.
+function nearestNodeId(nodes, latLon) {
+  let bestId = null;
+  let bestDist = Infinity;
+  for (const [id, point] of nodes) {
+    const d = haversine(latLon, point);
+    if (d < bestDist) {
+      bestDist = d;
+      bestId = id;
+    }
+  }
+  return bestId;
+}
+
 // Solves the route inspection problem on an already built graph.
-export function solve({ nodes, edges }, onProgress = noop) {
+// `startLatLon` (optional [lat, lon]) picks where the Eulerian circuit begins
+// and ends; it's snapped to the nearest network node. Because every vertex is
+// made even-degree, any start node yields the same streets and total distance.
+export function solve({ nodes, edges }, onProgress = noop, startLatLon = null) {
   if (edges.length === 0) {
     throw new Error("No runnable streets were found in this area.");
   }
@@ -138,7 +156,9 @@ export function solve({ nodes, edges }, onProgress = noop) {
   const allEdges = edges.concat(addedEdges);
 
   onProgress({ stage: "eulerian" });
-  const circuit = hierholzer(allEdges, allEdges[0].u);
+  const startNode =
+    (startLatLon && nearestNodeId(nodes, startLatLon)) || allEdges[0].u;
+  const circuit = hierholzer(allEdges, startNode);
   const path = walkToCoordinates(circuit, allEdges);
 
   const streetLengthTotal = edges.reduce((s, e) => s + e.length, 0);
@@ -153,8 +173,6 @@ export function solve({ nodes, edges }, onProgress = noop) {
       },
       network_stats: {
         center: centroid(path),
-        diameter: 0,
-        radius: 0,
       },
     },
     status: "public",
@@ -163,7 +181,12 @@ export function solve({ nodes, edges }, onProgress = noop) {
 
 // Full pipeline: validate -> download OSM -> build graph -> solve.
 // `lonLatRing` is a GeoJSON polygon ring ([lon, lat] points).
-export async function generateRoute(lonLatRing, name, onProgress = noop) {
+export async function generateRoute(
+  lonLatRing,
+  name,
+  onProgress = noop,
+  startLatLon = null
+) {
   const area = polygonAreaKm2(lonLatRing);
   if (area > MAX_POLYGON_AREA) {
     throw new Error(
@@ -177,7 +200,7 @@ export async function generateRoute(lonLatRing, name, onProgress = noop) {
   onProgress({ stage: "build-graph" });
   const graph = buildGraph(elements, lonLatRing);
 
-  const payload = solve(graph, onProgress);
+  const payload = solve(graph, onProgress, startLatLon);
   payload.statistics.name = name;
   return payload;
 }

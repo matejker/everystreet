@@ -124,6 +124,30 @@ sub {
     flex-basis: 100%;
 }
 
+/* Right-aligns the Download GPX action, opposite the Generate button. */
+.route-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.start-hint {
+    font-size: 0.85em;
+    color: #555;
+    margin: 0.4em 0;
+}
+
+/* Draggable "start here" pin dropped on the map. */
+.start-pin__dot {
+    display: block;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #007185;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px #007185, 0 1px 4px rgba(0, 0, 0, 0.4);
+    cursor: grab;
+}
+
 /* Buttons */
 button,
 .submit {
@@ -154,15 +178,22 @@ button:disabled {
 }
 
 /* --- Route loader (fancy loading state) --- */
+/* Sized to match the search form it replaces while a route generates. */
 .route-loader {
-    margin: 0.8em 0 1.2em 0;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    /* input: 0.45em*2 padding + ~1.08em line + 2px border ≈ same row height */
+    min-height: calc(0.9em + 1.08em + 2px);
+    margin: 0;
+    box-sizing: border-box;
 }
 
 .route-loader__headline {
     display: flex;
     align-items: center;
     gap: 0.5em;
-    font-size: 1.1em;
+    font-size: 0.9em;
     color: #121212;
 }
 

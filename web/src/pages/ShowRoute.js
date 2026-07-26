@@ -15,8 +15,6 @@ export const ShowRoute = () => {
         path_length_total: 0,
         street_length_total: 0,
         center: [0, 0],
-        diameter: 0,
-        radius: 0,
         name: ''
     });
 
@@ -39,8 +37,6 @@ export const ShowRoute = () => {
                     path_length_total: result.data.statistics.path_stats.path_length_total,
                     street_length_total: result.data.statistics.path_stats.street_length_total,
                     center: result.data.statistics.network_stats.center,
-                    diameter: result.data.statistics.network_stats.diameter,
-                    radius: result.data.statistics.network_stats.radius,
                     name: result.data.statistics.name || ''
                 });
             }
@@ -60,8 +56,6 @@ export const ShowRoute = () => {
                     <li>Total street length: { stats.street_length_total }km</li>
                     <li>Route length: { stats.path_length_total }km</li>
                     <li>Efficiency: +{ Math.round(1000 * (stats.path_length_total / stats.street_length_total  - 1)) / 10 }%</li>
-                    <li>Diameter: { stats.diameter }km</li>
-                    <li>Radius: { stats.radius }km</li>
                     <li><a href={`${SERVICE_URL}/route/gpx/${routeId}`} download={`everystreet-${routeId}.gpx`}>GPX file</a></li>
                 </ul>
             </>}
