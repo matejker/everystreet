@@ -3,9 +3,14 @@
 
 import { generateRoute } from "./routeInspection";
 
-export function runRoute(lonLatRing, name, onProgress = () => {}) {
+export function runRoute(
+  lonLatRing,
+  name,
+  onProgress = () => {},
+  startLatLon = null
+) {
   if (typeof Worker === "undefined") {
-    return generateRoute(lonLatRing, name, onProgress);
+    return generateRoute(lonLatRing, name, onProgress, startLatLon);
   }
 
   return new Promise((resolve, reject) => {
@@ -29,6 +34,6 @@ export function runRoute(lonLatRing, name, onProgress = () => {}) {
       worker.terminate();
     };
 
-    worker.postMessage({ lonLatRing, name });
+    worker.postMessage({ lonLatRing, name, startLatLon });
   });
 }

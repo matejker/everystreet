@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { Map, TileLayer, FeatureGroup, Polygon } from "react-leaflet";
+import React, { useState, useRef } from "react";
+import { Map, TileLayer, FeatureGroup, Polygon, Marker } from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
+import L from "leaflet";
 import "leaflet-draw/dist/leaflet.draw.css";
 import { OPEN_STREET_MAP } from "../config";
 import { Spacer } from '../components/constants';
@@ -8,6 +9,15 @@ import axios from 'axios';
 import RouteMap from "../components/Map";
 import RouteLoader from "../components/RouteLoader";
 import { runRoute } from "../lib/runRoute";
+import { downloadGpx } from "../lib/gpx";
+
+// Small self-contained pin (avoids Leaflet's broken default marker asset paths).
+const startIcon = L.divIcon({
+    className: "start-pin",
+    html: '<span class="start-pin__dot"></span>',
+    iconSize: [20, 20],
+    iconAnchor: [10, 10],
+});
 
 
 
@@ -55,6 +65,12 @@ export const Home = () => {
     const [loading, setLoading] = useState(false);
     const [noData, setNoData] = useState(false);
     const [progress, setProgress] = useState(null);
+    const [startPoint, setStartPoint] = useState(null); // [lat, lon] or null
+    // True while a polygon is being drawn/edited/deleted so map clicks don't
+    // accidentally drop a start marker. A ref (not state) keeps the value
+    // current inside the Leaflet click handler and survives the trailing
+    // click that completes a shape.
+    const drawingActiveRef = useRef(false);
 
     const [neighbourhood, setNeighbourhood] = useState(defaultNeighbourhood);
     const [centerPoint, setCenterPoint] = useState(defaultCenter);
@@ -68,8 +84,6 @@ export const Home = () => {
         path_length_total: 0,
         street_length_total: 0,
         center: [0, 0],
-        diameter: 0,
-        radius: 0,
         name: ''
     });
 
@@ -92,10 +106,10 @@ export const Home = () => {
 //        fetchData();
 //    });
 
-    const postRequest = (polygon, name) => {
+    const postRequest = (polygon, name, start) => {
         const run = async () => {
             try {
-                const result = await runRoute(polygon, name, (p) => setProgress(p));
+                const result = await runRoute(polygon, name, (p) => setProgress(p), start);
 
                 setPending(false);
                 setData(result);
@@ -104,8 +118,6 @@ export const Home = () => {
                     path_length_total: result.statistics.path_stats.path_length_total,
                     street_length_total: result.statistics.path_stats.street_length_total,
                     center: result.statistics.network_stats.center,
-                    diameter: result.statistics.network_stats.diameter,
-                    radius: result.statistics.network_stats.radius,
                     name: result.statistics.name || ''
                 });
                 setRequestSent(true);
@@ -172,20 +184,41 @@ export const Home = () => {
             in <a href="everystreet_algorithm.pdf" target="_blank" rel="noreferrer">the most optimal way</a>. Simply
             select or search for an area on the map, generate the route, and run #everystreet!</p>
 
-            { loading && <RouteLoader progress={progress} /> }
-
             {!requestSent && <>
-              <form className="search-form" onSubmit={(e) => getNeighbourhood(e)}>
-                <input type="text" value={neighbourhood}  className='search' onChange={(e) => setNeighbourhood(e.target.value)} />
-                <input type="submit" value="Search" className='submit' />
-                {noData && <em> No such place has been found!</em>}
-              </form>
-              <p></p>
-                <Map center={centerPoint} style={{ height: "50vh" }} animate={true} zoom={14}>
+              { loading
+                ? <RouteLoader progress={progress} />
+                : <form className="search-form" onSubmit={(e) => getNeighbourhood(e)}>
+                    <input type="text" value={neighbourhood}  className='search' onChange={(e) => setNeighbourhood(e.target.value)} />
+                    <input type="submit" value="Search" className='submit' />
+                    {noData && <em> No such place has been found!</em>}
+                  </form>
+              }
+              <p className="start-hint">Tip: click the map to set a start point (drag to adjust). Your route will begin and end there.</p>
+                <Map
+                    center={centerPoint}
+                    style={{ height: "50vh" }}
+                    animate={true}
+                    zoom={14}
+                    onClick={(e) => {
+                        if (drawingActiveRef.current) return;
+                        setStartPoint([e.latlng.lat, e.latlng.lng]);
+                    }}
+                >
                     <TileLayer
                         attribution='&amp;copy <a href="https://osm.org/copyright">OpenStreetMap</a>'
                         url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
                     />
+                    { startPoint && (
+                        <Marker
+                            position={startPoint}
+                            icon={startIcon}
+                            draggable={true}
+                            onDragend={(e) => {
+                                const { lat, lng } = e.target.getLatLng();
+                                setStartPoint([lat, lng]);
+                            }}
+                        />
+                    ) }
                     <FeatureGroup>
                         <EditControl
                             position='topright'
@@ -197,6 +230,12 @@ export const Home = () => {
                                 rectangle: false,
                                 circlemarker: false
                             }}
+                            onDrawStart={ () => { drawingActiveRef.current = true; } }
+                            onEditStart={ () => { drawingActiveRef.current = true; } }
+                            onDeleteStart={ () => { drawingActiveRef.current = true; } }
+                            onDrawStop={ () => { setTimeout(() => { drawingActiveRef.current = false; }, 0); } }
+                            onEditStop={ () => { setTimeout(() => { drawingActiveRef.current = false; }, 0); } }
+                            onDeleteStop={ () => { setTimeout(() => { drawingActiveRef.current = false; }, 0); } }
                             onCreated={ (e) => {
                                 setPolygon(e.layer.toGeoJSON().geometry.coordinates[0]);
                                 setPolygonReversed(e.layer.toGeoJSON().geometry.coordinates[0]);
@@ -221,7 +260,7 @@ export const Home = () => {
                 <button
                     disabled={buttonDisabled}
                     onClick={() => {
-                        postRequest(polygonReversed, name);
+                        postRequest(polygonReversed, name, startPoint);
                         setLoading(true);
                         setButtonDisabled(true);
                     }
@@ -237,10 +276,11 @@ export const Home = () => {
                         <li>Total street length: { stats.street_length_total }km</li>
                         <li>Route length: { stats.path_length_total }km</li>
                         <li>Efficiency: +{ Math.round(1000 * (stats.path_length_total / stats.street_length_total  - 1)) / 10 }%</li>
-                        <li>Diameter: { stats.diameter }km</li>
-                        <li>Radius: { stats.radius }km</li>
 
                     </ul>
+                    <div className="route-actions">
+                        <button onClick={() => downloadGpx(path, stats.name)}>Download GPX</button>
+                    </div>
                 </>}
             </>}
         </>

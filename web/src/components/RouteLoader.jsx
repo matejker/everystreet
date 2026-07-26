@@ -24,6 +24,18 @@ const FLAVOR = {
     "Downloading every street, alley and cul-de-sac",
     "Waking up the map servers",
     "Reading the neighbourhood, one road at a time",
+    "Asking OpenStreetMap very nicely for the data",
+    "Bundling up roads, lanes and footpaths",
+    "Tracing the tangle of one-way streets",
+    "Fetching roundabouts and awkward junctions",
+    "Collecting dead-ends and hidden shortcuts",
+    "Pulling in kerbs, corners and crossings",
+    "Rounding up every last side street",
+    "Sifting through raw OSM elements",
+    "Mapping out the local rat-runs",
+    "Gathering ways, nodes and relations",
+    "Catching the streets that hide from maps",
+    "Loading the concrete jungle into memory",
   ],
   "build-graph": [
     "Splitting ways at every intersection",
@@ -60,7 +72,7 @@ const RouteLoader = ({ progress }) => {
 
   // Cycle the flavour text.
   useEffect(() => {
-    const id = setInterval(() => setTick((t) => t + 1), 1900);
+    const id = setInterval(() => setTick((t) => t + 1), 3500);
     return () => clearInterval(id);
   }, []);
 

@@ -5,12 +5,17 @@
 import { generateRoute } from "./routeInspection";
 
 self.onmessage = async (event) => {
-  const { lonLatRing, name } = event.data;
+  const { lonLatRing, name, startLatLon } = event.data;
 
   try {
-    const payload = await generateRoute(lonLatRing, name, (progress) => {
-      self.postMessage({ type: "progress", progress });
-    });
+    const payload = await generateRoute(
+      lonLatRing,
+      name,
+      (progress) => {
+        self.postMessage({ type: "progress", progress });
+      },
+      startLatLon
+    );
     self.postMessage({ type: "result", payload });
   } catch (err) {
     self.postMessage({ type: "error", message: err.message || String(err) });
