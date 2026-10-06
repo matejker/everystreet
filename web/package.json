@@ -6,7 +6,7 @@
   "main": "src/index.js",
   "homepage": "https://matejker.github.io/everystreet",
   "dependencies": {
-    "axios": "^1.6.7",
+    "axios": "^1.20.0",
     "edmonds-blossom": "^1.0.0",
     "leaflet": "1.6.0",
     "leaflet-draw": "^1.0.4",
